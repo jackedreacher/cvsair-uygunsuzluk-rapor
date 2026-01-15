@@ -68,8 +68,12 @@ Bu proje `render.yaml` dosyası ile Render üzerinde "Blueprint" olarak deploy e
 ### Frontend (Vercel)
 1.  Vercel.com'da "Add New Project" deyin.
 2.  Reponuzu seçin.
-3.  Framework Preset olarak "Next.js" otomatik seçilecektir.
-4.  Deploy butonuna basın.
+3.  **ÖNEMLİ:** "Root Directory" (Kök Dizin) ayarını `frontend` olarak değiştirin. (Edit butonuna basıp `frontend` klasörünü seçin).
+4.  "Environment Variables" kısmına `NEXT_PUBLIC_API_URL` değişkenini ekleyin ve Backend API URL'ini (Render'dan aldığınız) girin.
+5.  Deploy butonuna basın.
+
+> **Not:** Eğer 404 Hatası alıyorsanız, "Root Directory" ayarını yapmamış olabilirsiniz. Vercel ayarlarından "General > Root Directory" kısmını `frontend` olarak güncelleyin.
+
 
 ## 🛠 Özellikler
 -   **Uygunsuzluk Formu:** Detaylı veri girişi ve dosya yükleme (S3 entegrasyonu gerekir).
