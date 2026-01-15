@@ -2,6 +2,7 @@ services:
   - type: web
     name: cvsair-api
     env: node
+    rootDir: backend
     plan: starter
     buildCommand: "npm install"
     startCommand: "npm start"
@@ -12,9 +13,10 @@ services:
           name: cvsair-db
           property: connectionString
       - key: CORS_ALLOW_ORIGIN
-        value: https://cvsair-frontend.vercel.app
+        value: "*"
       - key: NODE_ENV
         value: production
+
 databases:
   - name: cvsair-db
     plan: starter
