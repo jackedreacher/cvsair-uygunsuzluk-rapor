@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: cvsair-api
+    env: node
+    plan: starter
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cvsair-db
+          property: connectionString
+      - key: CORS_ALLOW_ORIGIN
+        value: https://cvsair-frontend.vercel.app
+      - key: NODE_ENV
+        value: production
+databases:
+  - name: cvsair-db
+    plan: starter
