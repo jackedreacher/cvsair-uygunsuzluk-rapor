@@ -42,6 +42,26 @@ const mailer = nodemailer.createTransport({
 app.get("/", (req, res) => res.json({ status: "Cvsair API is running", timestamp: new Date() }));
 app.get("/api/health", (req, res) => res.json({ status: "ok", timestamp: new Date() }));
 
+// --- DB SETUP ENDPOINT (TEMPORARY) ---
+app.get("/api/setup-db", async (req, res) => {
+  const fs = require("fs");
+  const path = require("path");
+  try {
+    const schemaPath = path.join(__dirname, "schema.sql");
+    const schema = fs.readFileSync(schemaPath, "utf8");
+    
+    // Split by semicolon to run statements one by one if needed, 
+    // but pool.query usually handles multiple statements if supported.
+    // For safety with pg-mem/simple drivers, let's just run it.
+    await pool.query(schema);
+    
+    res.json({ success: true, message: "Database tables created successfully!" });
+  } catch (error) {
+    console.error("DB Setup Error:", error);
+    res.status(500).json({ error: "db_setup_failed", details: error.message });
+  }
+});
+
 // --- API ENDPOINTS ---
 
 // 1. Create Nonconformity (Uygunsuzluk Oluştur)
