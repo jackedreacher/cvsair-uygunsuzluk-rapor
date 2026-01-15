@@ -3,7 +3,7 @@ services:
     name: cvsair-api
     env: node
     rootDir: backend
-    plan: starter
+    plan: free
     buildCommand: "npm install"
     startCommand: "npm start"
     autoDeploy: true
@@ -19,4 +19,4 @@ services:
 
 databases:
   - name: cvsair-db
-    plan: starter
+    plan: free
