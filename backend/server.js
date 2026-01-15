@@ -135,16 +135,13 @@ app.post("/api/nc", async (req, res) => {
       const user = await pool.query(`SELECT email FROM users WHERE id = $1`, [assigneeId]);
       const email = user.rows[0]?.email;
       if (email && process.env.SMTP_HOST) {
-        try {
-          await mailer.sendMail({
-            to: email,
-            from: process.env.SMTP_FROM || process.env.SMTP_USER,
-            subject: `Yeni Uygunsuzluk Atandı: ${nc.code}`,
-            text: `Size yeni bir uygunsuzluk kaydı atandı: ${nc.code}. Lütfen sisteme giriş yapıp kontrol ediniz.`
-          });
-        } catch (mailError) {
-          console.error("Mail sending failed:", mailError);
-        }
+        // Run mailer asynchronously without blocking response
+        mailer.sendMail({
+          to: email,
+          from: process.env.SMTP_FROM || process.env.SMTP_USER,
+          subject: `Yeni Uygunsuzluk Atandı: ${nc.code}`,
+          text: `Size yeni bir uygunsuzluk kaydı atandı: ${nc.code}. Lütfen sisteme giriş yapıp kontrol ediniz.`
+        }).catch(err => console.error("Mail Error:", err));
       }
     }
 
