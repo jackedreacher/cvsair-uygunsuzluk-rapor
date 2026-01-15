@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Standalone output helps with some deployment scenarios and reduces size
+  output: "standalone",
+  // Ensure trailing slashes are handled consistently
+  trailingSlash: false,
   async rewrites() {
     return [
       {
