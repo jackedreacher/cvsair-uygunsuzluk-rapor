@@ -85,6 +85,39 @@ app.get("/api/setup-db", async (req, res) => {
     
     res.json({ success: true, message: "Database tables created and seeded successfully!" });
   } catch (error) {
+    // If table already exists, just try to seed
+    if (error.message.includes("already exists")) {
+       try {
+          const userCheck = await pool.query("SELECT count(*) FROM users");
+          if (parseInt(userCheck.rows[0].count) === 0) {
+            console.log("Seeding users (retry)...");
+            await pool.query(`
+              INSERT INTO departments (id, name) VALUES 
+              (1, 'Kalite'), (2, 'Üretim'), (3, 'Satın Alma'), (4, 'Servis')
+              ON CONFLICT (id) DO NOTHING
+            `);
+            await pool.query(`
+              INSERT INTO roles (id, code) VALUES 
+              (1, 'ADMIN'), (2, 'QUALITY'), (3, 'DEPT_OWNER')
+              ON CONFLICT (id) DO NOTHING
+            `);
+            await pool.query(`
+              INSERT INTO users (id, email, full_name, department_id, is_active) VALUES 
+              (1, 'admin@cvsair.com', 'Admin User', 1, true),
+              (2, 'uretim@cvsair.com', 'Üretim Sorumlusu', 2, true)
+              ON CONFLICT (id) DO NOTHING
+            `);
+            await pool.query("SELECT setval('users_id_seq', (SELECT MAX(id) FROM users))");
+            await pool.query("SELECT setval('departments_id_seq', (SELECT MAX(id) FROM departments))");
+            return res.json({ success: true, message: "Tables existed, but data seeded successfully!" });
+          }
+          return res.json({ success: true, message: "Database already ready." });
+       } catch (seedError) {
+          console.error("Seed Error:", seedError);
+          return res.status(500).json({ error: "seed_failed", details: seedError.message });
+       }
+    }
+
     console.error("DB Setup Error:", error);
     res.status(500).json({ error: "db_setup_failed", details: error.message });
   }
