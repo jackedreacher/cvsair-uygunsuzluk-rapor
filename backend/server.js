@@ -50,12 +50,40 @@ app.get("/api/setup-db", async (req, res) => {
     const schemaPath = path.join(__dirname, "schema.sql");
     const schema = fs.readFileSync(schemaPath, "utf8");
     
-    // Split by semicolon to run statements one by one if needed, 
-    // but pool.query usually handles multiple statements if supported.
-    // For safety with pg-mem/simple drivers, let's just run it.
     await pool.query(schema);
+
+    // Seed Data (Check if users exist first)
+    const userCheck = await pool.query("SELECT count(*) FROM users");
+    if (parseInt(userCheck.rows[0].count) === 0) {
+      console.log("Seeding users...");
+      // Insert Departments
+      await pool.query(`
+        INSERT INTO departments (id, name) VALUES 
+        (1, 'Kalite'), (2, 'Üretim'), (3, 'Satın Alma'), (4, 'Servis')
+        ON CONFLICT (id) DO NOTHING
+      `);
+      
+      // Insert Roles
+      await pool.query(`
+        INSERT INTO roles (id, code) VALUES 
+        (1, 'ADMIN'), (2, 'QUALITY'), (3, 'DEPT_OWNER')
+        ON CONFLICT (id) DO NOTHING
+      `);
+
+      // Insert Users (ID: 1 is crucial as it's used in frontend demo)
+      await pool.query(`
+        INSERT INTO users (id, email, full_name, department_id, is_active) VALUES 
+        (1, 'admin@cvsair.com', 'Admin User', 1, true),
+        (2, 'uretim@cvsair.com', 'Üretim Sorumlusu', 2, true)
+        ON CONFLICT (id) DO NOTHING
+      `);
+      
+      // Reset sequence to avoid id collision
+      await pool.query("SELECT setval('users_id_seq', (SELECT MAX(id) FROM users))");
+      await pool.query("SELECT setval('departments_id_seq', (SELECT MAX(id) FROM departments))");
+    }
     
-    res.json({ success: true, message: "Database tables created successfully!" });
+    res.json({ success: true, message: "Database tables created and seeded successfully!" });
   } catch (error) {
     console.error("DB Setup Error:", error);
     res.status(500).json({ error: "db_setup_failed", details: error.message });
