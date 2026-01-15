@@ -57,22 +57,7 @@ Bu proje, Cvsair için uygunsuzluk raporlarının takibi, görev ataması ve kal
     ```
     Uygulama `http://localhost:3000` adresinde çalışacaktır.
 
-## ☁️ Dağıtım (Deployment)
 
-### Backend (Render.com)
-Bu proje `render.yaml` dosyası ile Render üzerinde "Blueprint" olarak deploy edilebilir.
-1.  Bu projeyi GitHub/GitLab hesabınıza yükleyin.
-2.  Render.com'da "Blueprints" sekmesinden "New Blueprint Instance" seçeneğine tıklayın.
-3.  Reponuzu bağlayın ve deploy işlemini başlatın.
-
-### Frontend (Vercel)
-1.  Vercel.com'da "Add New Project" deyin.
-2.  Reponuzu seçin.
-3.  **ÖNEMLİ:** "Root Directory" (Kök Dizin) ayarını `frontend` olarak değiştirin. (Edit butonuna basıp `frontend` klasörünü seçin).
-4.  "Environment Variables" kısmına `NEXT_PUBLIC_API_URL` değişkenini ekleyin ve Backend API URL'ini (Render'dan aldığınız) girin.
-5.  Deploy butonuna basın.
-
-> **Not:** Eğer 404 Hatası alıyorsanız, "Root Directory" ayarını yapmamış olabilirsiniz. Vercel ayarlarından "General > Root Directory" kısmını `frontend` olarak güncelleyin.
 
 
 ## 🛠 Özellikler
