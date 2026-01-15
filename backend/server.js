@@ -39,6 +39,7 @@ const mailer = nodemailer.createTransport({
 });
 
 // Health Check
+app.get("/", (req, res) => res.json({ status: "Cvsair API is running", timestamp: new Date() }));
 app.get("/api/health", (req, res) => res.json({ status: "ok", timestamp: new Date() }));
 
 // --- API ENDPOINTS ---
